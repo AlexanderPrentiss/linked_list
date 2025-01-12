@@ -29,24 +29,25 @@ typedef struct linkedlist{
 } LinkedList_T;
 
 // --Linked List methods--
-// TODO: add_node creates nodes instead of being given nodes to insert
 // add_node appends a node object to the node list attribute
-void add_node(LinkedList_T* list, Node_T* node){
+void add_node(LinkedList_T* list, int data){
+  Node_T* new = (Node_T*) malloc(sizeof(Node_T));
+  set_data(new, data);
   if (list->head == NULL) {     // if the list is empty make the current node the head
-    list->head = node;
+    list->head = new;
     list->size = 1;
   } else {                      // if the list is not empty find the end and append node
     Node_T* cur = list->head;
     while (cur->next != NULL) {
       cur = cur->next;
     }
-    set_next(cur, node);
+    set_next(cur, new);
     list->size++;
   }
 }
 
 //get_node returns the node of a specified value
-Node_T* get_node(LinkedList_T* list,int data) {
+Node_T* get_node(LinkedList_T* list, int data) {
   if (list->size <= 0) {            // if the list is empty it's probably not there
     printf("Item not in list\n");
     return NULL;
@@ -75,25 +76,19 @@ void destroy_list(LinkedList_T* list) {
 
 // test checks the functionality of the list
 void test(){
-  Node_T* node1 = (Node_T*) malloc(sizeof(Node_T));
-  Node_T* node2 = (Node_T*) malloc(sizeof(Node_T));
-  Node_T* node3 = (Node_T*) malloc(sizeof(Node_T));
-  Node_T* node4 = (Node_T*) malloc(sizeof(Node_T));
   LinkedList_T* list = (LinkedList_T*) malloc(sizeof(LinkedList_T));
 
-  set_data(node1, 4);
-  set_data(node2, 2);
-  set_data(node3, 8);
-  set_data(node4, 12);
+  add_node(list, 4);
+  add_node(list, 2);
+  add_node(list, 8);
+  add_node(list, 12);
 
-  add_node(list, node1);
-  add_node(list, node2);
-  add_node(list, node3);
-  add_node(list, node4);
 
-  assert(get_node(list, 12) == NULL, "RAISE::EXCEPTION::FOUND::NON-EXISTANT::VALUE");
-  assert(get_node(list, 2) == node2, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
+  assert(get_node(list, 100) == NULL, "RAISE::EXCEPTION::FOUND::NON-EXISTANT::VALUE");
+  assert(get_node(list, 2) != NULL, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
   assert(get_node(list, 4) == list->head, "RAISE::EXCEPTION::UNEXPECTED::HEAD-NODE");
+  assert(get_node(list, 8) != NULL, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
+  assert(get_node(list, 12) != NULL, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
   destroy_list(list);
 }
 
