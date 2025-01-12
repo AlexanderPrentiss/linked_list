@@ -2,7 +2,7 @@
 #include<stdlib.h>
 
 #ifndef assert
-#define assert(expr,m)     (expr ? 0:(printf("%s\n",m), exit(-1)))
+#define assert(expr,m)     (expr ? 0:(printf("%s\n",m), exit(-1))) /* assert checks a expression. If the expression is not true, an error message m is thrown and the program exits on code -1*/
 #endif
 
 // Node struct
@@ -31,7 +31,7 @@ typedef struct linkedlist{
 // --Linked List methods--
 // add_node appends a node object to the node list attribute
 void add_node(LinkedList_T* list, int data){
-  Node_T* new = (Node_T*) malloc(sizeof(Node_T));
+  Node_T* new = (Node_T*) malloc(sizeof(Node_T)); // create new node
   set_data(new, data);
   if (list->head == NULL) {     // if the list is empty make the current node the head
     list->head = new;
@@ -61,16 +61,38 @@ Node_T* get_node(LinkedList_T* list, int data) {
   return NULL;                      // still not there 
 }
 
+// remove_node removes a node of certain value from the list, then returns removed node
+Node_T* remove_node(LinkedList_T* list, int data) {
+  Node_T* cur = list->head;
+  Node_T* prev = (Node_T*) malloc(sizeof(Node_T));
+  if (cur->data == data) { // if the node is the head just change the list head pointer
+    list->head = cur->next;
+    free(cur);
+  } else { // if not it's more complicated
+    prev = cur; // since the head is not the node we can skip to node #2
+    cur = cur->next;
+    while (cur != NULL) { 
+      if (cur->data == data) {
+          prev->next = cur->next; // set the pointer of the previous node to the next node , skip cur
+          free(cur); // destroy cur
+          return cur; // return the destroyed node
+      }
+      prev = cur; // move forward in the list
+      cur = cur->next;
+    }
+  }
+  return NULL; // not does not exist
+}
+
 // destroy_list frees each node object's memory, then frees the list
 void destroy_list(LinkedList_T* list) {
   Node_T* cur = list->head;
   Node_T* to_free;
-  while (cur != NULL) {
+  while (cur != NULL) { // free node until we hit NULL
     to_free = cur;
     cur = cur->next;
     free(to_free);
   }
-  free(cur);
   free(list);
 }
 
@@ -84,11 +106,18 @@ void test(){
   add_node(list, 12);
 
 
+  // Check insertion & get_node
   assert(get_node(list, 100) == NULL, "RAISE::EXCEPTION::FOUND::NON-EXISTANT::VALUE");
   assert(get_node(list, 2) != NULL, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
   assert(get_node(list, 4) == list->head, "RAISE::EXCEPTION::UNEXPECTED::HEAD-NODE");
   assert(get_node(list, 8) != NULL, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
   assert(get_node(list, 12) != NULL, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
+
+  // Check removeal
+  assert(remove_node(list, 2) != NULL, "RAISE::EXCEPTION::REMOVAL::EXISTANT::VALUE::FAILED");
+  assert(remove_node(list, 100) == NULL, "RAISE::EXCEPTION::REMOVAL::NON-EXISTANT::VALUE::SUCCEEDED");
+  assert(get_node(list, 2) == NULL, "RAISE::EXCEPTION::REMOVED::FOUND");
+
   destroy_list(list);
 }
 
