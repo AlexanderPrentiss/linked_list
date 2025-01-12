@@ -2,7 +2,7 @@
 #include<stdlib.h>
 
 #ifndef assert
-#define assert(x,y,m)     (x == y ? 0:m)
+#define assert(expr,m)     (expr ? 0:(printf("%s\n",m), exit(-1)))
 #endif
 
 // Node struct
@@ -57,7 +57,6 @@ Node_T* get_node(LinkedList_T* list,int data) {
       cur = cur->next;
     }
   }
-  printf("Item not in list\n");
   return NULL;                      // still not there 
 }
 
@@ -79,25 +78,22 @@ void test(){
   Node_T* node1 = (Node_T*) malloc(sizeof(Node_T));
   Node_T* node2 = (Node_T*) malloc(sizeof(Node_T));
   Node_T* node3 = (Node_T*) malloc(sizeof(Node_T));
+  Node_T* node4 = (Node_T*) malloc(sizeof(Node_T));
   LinkedList_T* list = (LinkedList_T*) malloc(sizeof(LinkedList_T));
 
   set_data(node1, 4);
   set_data(node2, 2);
   set_data(node3, 8);
+  set_data(node4, 12);
 
   add_node(list, node1);
   add_node(list, node2);
   add_node(list, node3);
+  add_node(list, node4);
 
-  printf("Should be NULL: %p\n", get_node(list, 25));
-  printf("Should be some pointer: %p\n", get_node(list,2));
-
-  
-  printf("Before list destruction, list size: %lu\n", sizeof(*list));
-  printf("Node1: %lu\nNode2: %lu\nNode3: %lu\n", sizeof(*node1), sizeof(*node2), sizeof(*node3));
-  destroy_list(list);
-  printf("After list destruction, list size: %lu\n", sizeof(*list));
-  printf("Node1: %lu\nNode2: %lu\nNode3: %lu\n", sizeof(*node1), sizeof(*node2), sizeof(*node3));
+  assert(get_node(list, 12) == NULL, "RAISE::EXCEPTION::FOUND::NON-EXISTANT::VALUE");
+  assert(get_node(list, 2) == node2, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
+  assert(get_node(list, 4) == list->head, "RAISE::EXCEPTION::UNEXPECTED::HEAD-NODE");
 }
 
 int main() {
