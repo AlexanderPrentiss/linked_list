@@ -52,7 +52,7 @@ Node_T* get_node(LinkedList_T* list,int data) {
     return NULL;
   } else {                          // if it isn't empty loop through the list to check
     Node_T* cur = list->head;
-    while (cur->next != NULL) {
+    while (cur != NULL) {
       if (cur->data == data) return cur; // found!
       cur = cur->next;
     }
@@ -94,6 +94,7 @@ void test(){
   assert(get_node(list, 12) == NULL, "RAISE::EXCEPTION::FOUND::NON-EXISTANT::VALUE");
   assert(get_node(list, 2) == node2, "RAISE::EXCEPTION::NOT-FOUND::EXISTANT::VALUE");
   assert(get_node(list, 4) == list->head, "RAISE::EXCEPTION::UNEXPECTED::HEAD-NODE");
+  destroy_list(list);
 }
 
 int main() {
