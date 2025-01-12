@@ -1,6 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+#ifndef assert
+#define assert(x,y,m)     (x == y ? 0:m)
+#endif
+
 // Node struct
 typedef struct node{
   int data;
@@ -57,18 +61,18 @@ Node_T* get_node(LinkedList_T* list,int data) {
   return NULL;                      // still not there 
 }
 
-// TODO:
-// destroy_list will free each node object's memory, then free the list
-/*void destroy_list(LinkedList_T* list) {
+// destroy_list frees each node object's memory, then frees the list
+void destroy_list(LinkedList_T* list) {
   Node_T* cur = list->head;
   Node_T* to_free;
   while (cur != NULL) {
     to_free = cur;
     cur = cur->next;
-    //free(to_free);
+    free(to_free);
   }
   free(cur);
-}*/
+  free(list);
+}
 
 // test checks the functionality of the list
 void test(){
@@ -87,10 +91,17 @@ void test(){
 
   printf("Should be NULL: %p\n", get_node(list, 25));
   printf("Should be some pointer: %p\n", get_node(list,2));
-  //destroy_list(list);
+
+  
+  printf("Before list destruction, list size: %lu\n", sizeof(*list));
+  printf("Node1: %lu\nNode2: %lu\nNode3: %lu\n", sizeof(*node1), sizeof(*node2), sizeof(*node3));
+  destroy_list(list);
+  printf("After list destruction, list size: %lu\n", sizeof(*list));
+  printf("Node1: %lu\nNode2: %lu\nNode3: %lu\n", sizeof(*node1), sizeof(*node2), sizeof(*node3));
 }
 
 int main() {
+  test();
   return 0;
 }
 
